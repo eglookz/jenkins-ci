@@ -1,10 +1,11 @@
 pipeline {
     agent none
     environment {
+		SLN_NAME = 'AsposeTestApp.sln'
 		REPO     = 'https://github.com/eglookz/jenkins-ci.git'
-		SLN_NAME = '${env.WORKSPACE}\\AsposeTestApp.sln'
-
-		NUGET = "\"C:\\Jenkins\\workspace\\tools\\nuget\\nuget.exe\""
+		
+		NUGET    = "\"C:\\Jenkins\\workspace\\tools\\nuget\\nuget.exe\""
+		NUNIT    = "\"C:\\Program Files (x86)\\NUnit.org\\nunit-console\\nunit3-console.exe\""
     }
 
     stages {
@@ -15,7 +16,7 @@ pipeline {
                         label 'master'
                     }
                     steps {
-                    	checkout scm
+                    	git url: REPO
                     	bat("${NUGET} restore \"${SLN_NAME}\"")
                     }
                 }
@@ -24,7 +25,7 @@ pipeline {
                         label 'specific'
                     }
                     steps {
-                    	checkout scm
+                    	git url: REPO
                     	bat("${NUGET} restore \"${SLN_NAME}\"")
                     }
                 }
@@ -57,7 +58,7 @@ pipeline {
                         label 'master'
                     }
                     steps {
-                    	bat("${NUNIT} \"${env.WORKSPACE}\\AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" /framework:net-4.5")
+                    	bat("${NUNIT} \"AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" /framework:net-4.5")
                     }
                 }
                 stage('Test on specific-slave') {
@@ -65,7 +66,7 @@ pipeline {
                         label 'specific'
                     }
                     steps {
-                    	bat("${NUNIT} \"${env.WORKSPACE}\\AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" /framework:net-4.5")
+                    	bat("${NUNIT} \"AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" /framework:net-4.5")
                     }
                 }
             }
