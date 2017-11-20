@@ -72,6 +72,7 @@ pipeline {
                     }
                     steps {
                         bat("${NUNIT} \"AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" --test=AsposeTestApp.CalculatorTest /framework:net-4.5")
+                        // Формирование отчёта по тестированию в Jenkins Pipeline View на основе сформированного TestResult.xml
                         nunit testResultsPattern: 'TestResult.xml'
                     }
                 }
@@ -81,6 +82,7 @@ pipeline {
                     }
                     steps {
                         bat("${NUNIT} \"AsposeTestApp\\bin\\Release\\AsposeTestApp.exe\" --test=AsposeTestApp.SpecificCalculatorTest /framework:net-4.5")
+                        // Формирование отчёта по тестированию в Jenkins Pipeline View на основе сформированного TestResult.xml
                         nunit testResultsPattern: 'TestResult.xml'
                     }
                 }
