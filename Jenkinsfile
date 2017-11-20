@@ -9,10 +9,14 @@ pipeline {
     }
 
     stages {
+        // Шаг подготовки: 
+        // загрузка исходников и restore необходимых для проекта библиотек 
+        // на каждой из нод в нашей инфраструктуре
         stage('Preparation') {
             parallel {
                 stage('Prepare on common-node') {
                     agent {
+                        // На общей ноде
                         label 'common-node'
                     }
                     steps {
@@ -22,6 +26,7 @@ pipeline {
                 }
                 stage('Prepare on specific-node') {
                     agent {
+                        // На специфической ноде
                         label 'specific-node'
                     }
                     steps {
@@ -31,6 +36,9 @@ pipeline {
                 }
             }
         }
+        // Шаг компиляции и сброки: 
+        // компиляция и сборка проекта 
+        // на каждой из нод в нашей инфраструктуре
         stage('Build') {
             parallel {
                 stage('Build on common-node') {
@@ -51,6 +59,11 @@ pipeline {
                 }
             }           
         }
+        // Шаг тестирования NUnit: 
+        // на основе собранных проектов
+        // на каждой из нод в нашей инфраструктуре запускаются тесты:
+        //  - из класса CalculatorTest на общей ноде с меткой common-node
+        //  - из класса SpecificCalculatorTest на специфической ноде с меткой specific-node
         stage('Test') {
             parallel {
                 stage('Test on common-node') {
@@ -74,6 +87,9 @@ pipeline {
             }
         }
     }
+    // Постобработка:
+    // Рассылка уведомлений на denis.schelkunov@gmail.com
+    // при ошибках на любом из шагов, либо при успешном завершении всего Pipeline
     post {
         success {
             mail to: 'denis.schelkunov@gmail.com',
